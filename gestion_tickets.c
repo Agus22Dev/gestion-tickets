@@ -41,11 +41,11 @@ void mostrarTicket(Ticket* t) {
     struct tm* tm_info = localtime(&t->horaRegistro);
     strftime(hora, 26, "%Y-%m-%d %H:%M:%S", tm_info);
 
-    printf("ID: %d\\n", t->id);
-    printf("Descripción: %s\\n", t->descripcion);
-    printf("Prioridad: %s\\n", prioridadATexto(t->prioridad));
-    printf("Hora de registro: %s\\n", hora);
-    printf("--------------------------\\n");
+    printf("ID: %d\n", t->id);
+    printf("Descripcion: %s\n", t->descripcion);
+    printf("Prioridad: %s\n", prioridadATexto(t->prioridad));
+    printf("Hora de registro: %s\n", hora);
+    printf("--------------------------\n");
 }
 
 // Registrar nuevo ticket (siempre prioridad BAJO)
@@ -58,13 +58,14 @@ void registrarTicket() {
     scanf("%d", &nuevo->id);
     getchar();
 
-    printf("Ingrese la descripción del problema: ");
+    printf("Ingrese la descripcion del problema: ");
     fgets(nuevo->descripcion, sizeof(nuevo->descripcion), stdin);
-    nuevo->descripcion[strcspn(nuevo->descripcion, "\\n")] = '\\0';
+    size_t len = strcspn(nuevo->descripcion, "\n");
+    nuevo->descripcion[len] = '\0';
 
     list_sortedInsert(colas[BAJO], nuevo, menorPorHora);
 
-    printf("Ticket registrado con prioridad BAJO y hora actual.\\n");
+    printf("Ticket registrado con prioridad BAJO y hora actual.\n");
 }
 
 // Asignar nueva prioridad a un ticket
@@ -77,7 +78,7 @@ void asignarPrioridad() {
     scanf("%d", &nueva);
 
     if (nueva < 0 || nueva > 2) {
-        printf("Prioridad inválida.\\n");
+        printf("Prioridad invalida.\n");
         return;
     }
 
@@ -89,13 +90,13 @@ void asignarPrioridad() {
                 list_popCurrent(colas[i]);
                 t->prioridad = (Prioridad)nueva;
                 list_sortedInsert(colas[nueva], t, menorPorHora);
-                printf("Prioridad del ticket ID %d actualizada a %s.\\n", id, prioridadATexto(t->prioridad));
+                printf("Prioridad del ticket ID %d actualizada a %s.\n", id, prioridadATexto(t->prioridad));
                 return;
             }
             ptr = list_next(colas[i]);
         }
     }
-    printf("No se encontró un ticket con ese ID.\\n");
+    printf("No se encontro un ticket con ese ID.\n");
 }
 
 // Mostrar todos los tickets pendientes
@@ -104,7 +105,7 @@ void mostrarTicketsPendientes() {
     for (int i = 2; i >= 0; i--) {
         void* ptr = list_first(colas[i]);
         if (ptr != NULL) {
-            printf("\\nTickets con prioridad %s:\\n", prioridadATexto(i));
+            printf("\nTickets con prioridad %s:\n", prioridadATexto(i));
             hayTickets = 1;
         }
         while (ptr != NULL) {
@@ -113,7 +114,7 @@ void mostrarTicketsPendientes() {
             ptr = list_next(colas[i]);
         }
     }
-    if (!hayTickets) printf("No hay tickets pendientes.\\n");
+    if (!hayTickets) printf("No hay tickets pendientes.\n");
 }
 
 // Procesar siguiente ticket
@@ -122,13 +123,13 @@ void procesarSiguienteTicket() {
         Ticket* t = (Ticket*)list_first(colas[i]);
         if (t != NULL) {
             list_popFront(colas[i]);
-            printf("\\nProcesando ticket:\\n");
+            printf("\nProcesando ticket:\n");
             mostrarTicket(t);
             free(t);
             return;
         }
     }
-    printf("No hay tickets pendientes para procesar.\\n");
+    printf("No hay tickets pendientes para procesar.\n");
 }
 
 // Buscar ticket por ID
@@ -142,14 +143,14 @@ void buscarTicketPorID() {
         while (ptr != NULL) {
             Ticket* t = (Ticket*)ptr;
             if (t->id == id) {
-                printf("Ticket encontrado:\\n");
+                printf("Ticket encontrado:\n");
                 mostrarTicket(t);
                 return;
             }
             ptr = list_next(colas[i]);
         }
     }
-    printf("No se encontró un ticket con ese ID.\\n");
+    printf("No se encontro un ticket con ese ID.\n");
 }
 
 // Función principal
@@ -160,14 +161,14 @@ int main() {
 
     int opcion;
     do {
-        printf("\\n--- Sistema de Gestión de Tickets ---\\n");
-        printf("1. Registrar ticket\\n");
-        printf("2. Asignar prioridad a ticket\\n");
-        printf("3. Mostrar tickets pendientes\\n");
-        printf("4. Procesar siguiente ticket\\n");
-        printf("5. Buscar ticket por ID\\n");
-        printf("6. Salir\\n");
-        printf("Seleccione una opción: ");
+        printf("\n--- Sistema de Gestion de Tickets ---\n");
+        printf("1. Registrar ticket\n");
+        printf("2. Asignar prioridad a ticket\n");
+        printf("3. Mostrar tickets pendientes\n");
+        printf("4. Procesar siguiente ticket\n");
+        printf("5. Buscar ticket por ID\n");
+        printf("6. Salir\n");
+        printf("Seleccione una opcion: ");
         scanf("%d", &opcion);
         getchar();
 
@@ -177,8 +178,8 @@ int main() {
             case 3: mostrarTicketsPendientes(); break;
             case 4: procesarSiguienteTicket(); break;
             case 5: buscarTicketPorID(); break;
-            case 6: printf("Saliendo...\\n"); break;
-            default: printf("Opción inválida.\\n"); break;
+            case 6: printf("Saliendo...\n"); break;
+            default: printf("Opcion invalida.\n"); break;
         }
     } while (opcion != 6);
 
